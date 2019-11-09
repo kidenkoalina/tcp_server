@@ -2,6 +2,7 @@ package robot;
 
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 /**
  * @author kidenkoalina on 02/11/2019
@@ -10,29 +11,74 @@ import java.net.*;
 class Client {
     private static final String SERVER_IP = "127.0.0.1";
     private static final int SERVER_PORT = 9090;
+    Socket socket;
+    DataInputStream din;
+    DataOutputStream dout;
 
+    public static void main(String[] args) throws IOException, InterruptedException {
+        new Client();
+    }
 
-    public static void main(String[] args) throws IOException {
+    public Client() throws IOException {
+        socket = new Socket(SERVER_IP, SERVER_PORT);
+        din = new DataInputStream(socket.getInputStream());
+        dout = new DataOutputStream(socket.getOutputStream());
+//        DataInputStream keyboard = new DataInputStream(System.in);
 
-        Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+        listenForInput();
 
-        BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
-        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-
-        while (true) {
-            System.out.println(">");
-            String command = keyboard.readLine();
-
-            if(command.equals("quit")){ break;}
-
-            out.println(command);
-
-            int serverResponse = input.read();
-            System.out.println("server says: " + serverResponse);
-        }
         socket.close();
         System.exit(0);
+    }
+
+    private void listenForInput() {
+
+        Scanner console = new Scanner(System.in);
+
+        while(true){
+            //dokud neni nic na inputu, tak cekame
+            while (!console.hasNextLine()) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            //jinak nacteme do Stringu
+            String input = console.nextLine();
+            if(input.equals("quit")){
+                break;
+            }
+
+            try {
+                dout.writeUTF(input);
+                dout.flush();
+
+                //there is nothing available at input (Server hasn't sent anything yet)
+                while(din.available() == 0){
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //Server has sent something
+                String reply =  din.readUTF();
+                //Server's reply
+                System.out.println(reply);
+            } catch (IOException e) {
+                e.printStackTrace();
+                break; //if something went wrong we will jump out from while(true)
+            }
+        }
+
+        try {
+            din.close();
+            dout.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
