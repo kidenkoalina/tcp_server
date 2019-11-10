@@ -2,16 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8e6b329a-47d6-4f3b-ac47-1ccc3215e30e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/robot/ServerConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/robot/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/robot/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/robot/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/robot/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/META-INF/TSPServer.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/robot/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/robot/ServerConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/robot/Client.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/robot/Client.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/robot/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/robot/Server.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -108,7 +102,7 @@
       <updated>1572696608986</updated>
       <workItem from="1572696614180" duration="4423000" />
       <workItem from="1572788710883" duration="10904000" />
-      <workItem from="1573302891578" duration="7249000" />
+      <workItem from="1573302891578" duration="15399000" />
     </task>
     <servers />
   </component>
@@ -125,5 +119,21 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/robot/Client.java</url>
+          <line>68</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/robot/ServerConnection.java</url>
+          <line>39</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
