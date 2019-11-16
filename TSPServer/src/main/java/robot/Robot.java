@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Robot {
         public static void main(String[] args) throws IOException {
             new Server(Integer.parseInt( args[0]));
-//            new Server(9090);
+//            new Server(3999);
         }
     }
 
@@ -24,9 +24,6 @@ class Server {
 
     ArrayList<ServerConnection> connections = new ArrayList<ServerConnection>();
 
-//    public static void main(int port) throws IOException {
-//        new Server(port);
-//    }
 
     public Server(int port) {
         try {
@@ -50,13 +47,14 @@ class ServerConnection extends Thread {
     Server server;
     Socket socket;
     DataInputStream din;
-//    DataOutputStream dout;
-    PrintWriter pout;
+    DataOutputStream dout;
+//    PrintWriter pout;
     private boolean shouldRun = true;
     private boolean loginSuccess = false;
     private boolean readUsername = false;
     private StringBuilder sb;
     private int sumForLogin;
+    private boolean readAnything = false;
 
     public ServerConnection(Socket socket, Server server){
         super("ServerConnectionThread"+i);
@@ -69,8 +67,8 @@ class ServerConnection extends Thread {
     public void run() {
         try {
             din = new DataInputStream(socket.getInputStream());
-//            dout = new DataOutputStream(socket.getOutputStream());
-            pout = new PrintWriter(socket.getOutputStream(), true);
+            dout = new DataOutputStream(socket.getOutputStream());
+//            pout = new PrintWriter(socket.getOutputStream(), true);
             sb = new StringBuilder();
             sumForLogin = 0;
 
@@ -87,7 +85,6 @@ class ServerConnection extends Thread {
                 //jiz jsme prihlaseni a muzeme zacit prijimat INFO a FOTO
                 else {
                     findOutIfItIsINFOOrFOTO();
-//                    listenForData();
                 }
             }
 
@@ -102,29 +99,38 @@ class ServerConnection extends Thread {
         waitForInput();
         while (din.available() > 0) {
             Byte uByte = din.readByte();
+            if(endOfTheMessage(uByte) && !readAnything){
+                dout.write("501 SYNTAX ERROR\r\n".getBytes());
+                closeConnection();
+            }
             if (endOfTheMessage(uByte)) break;
             if(uByte.toString().equals("73")){ //I
+                readAnything = true;
                 if(verifySyntaxForINFO(uByte)){
                     getINFO(uByte);
-                    pout.println("202 OK\r");
+                    dout.write("202 OK\r\n".getBytes());
+//                    pout.println("202 OK\r");
                 }
             }
             else if(uByte.toString().equals("70")) { //F
+                readAnything = true;
                 if(verifySyntaxForFOTO(uByte)){
                     getFOTO();
-                    pout.println("202 OK\r");
+                    dout.write("202 OK\r\n".getBytes());
+//                    pout.println("202 OK\r");
                 }
             }
             else {
-                pout.println("501 SYNTAX ERROR\r");
+                dout.write("501 SYNTAX ERROR\r\n".getBytes());
                 closeConnection();
                 break;
             }
         }
     }
 
-    private boolean endOfTheMessage(Byte uByte){
+    private boolean endOfTheMessage(Byte uByte) throws IOException {
         if(uByte.toString().equals("13")) {
+            uByte = din.readByte();
             if (uByte.toString().equals("10")) {
                 return true;
             }
@@ -143,7 +149,7 @@ class ServerConnection extends Thread {
         }
     }
 
-    private boolean verifySyntaxForFOTO(Byte uByte) throws IOException {
+    private boolean verifySyntaxForFOTO(Byte uByte) throws IOException, InterruptedException {
         uByte = din.readByte();
         if(uByte.toString().equals("79")){ //O
             uByte = din.readByte();
@@ -157,7 +163,8 @@ class ServerConnection extends Thread {
                 }
             }
         }
-        pout.println("501 SYNTAX ERROR\r");
+//        pout.println("501 SYNTAX ERROR\r");
+        dout.write("501 SYNTAX ERROR\r\n".getBytes());
         closeConnection();
         return false;
     }
@@ -173,59 +180,85 @@ class ServerConnection extends Thread {
                     uByte = din.readByte();
                     if(uByte.toString().equals("32")) { //_space
                         return true;
-                    } else {pout.println("501 SYNTAX ERROR\r");}
-                } else {pout.println("501 SYNTAX ERROR\r");}
-            } else {pout.println("501 SYNTAX ERROR\r");}
-        } else {pout.println("501 SYNTAX ERROR\r");}
+                    } else {dout.write("501 SYNTAX ERROR\r\n".getBytes());;}
+                } else {dout.write("501 SYNTAX ERROR\r\n".getBytes());;}
+            } else {dout.write("501 SYNTAX ERROR\r\n".getBytes());;}
+        } else {dout.write("501 SYNTAX ERROR\r\n".getBytes());;}
+        closeConnection();
         return false;
     }
 
-    private void listenForData(){
-    }
 
-    private void closeConnection() throws IOException {
+    private void closeConnection() throws IOException, InterruptedException {
+        Thread.sleep(1000);
         din.close();
-        pout.close();
+        dout.close();
+//        pout.close();
         socket.close();
     }
 
     private void waitForInput() throws InterruptedException, IOException {
         //there is nothing available at input (Client hasn't sent anything yet)
-        while (din.available() == 0) {
-            Thread.sleep(1);
+        for(int i = 1;i<=45;i++){
+            if(din.available() == 0){
+                Thread.sleep(1000);
+                if(i==45){
+                    shouldRun = false;
+                    closeConnection();
+                }
+            }
+
+            else break;
         }
+
+//        while (din.available() == 0) {
+//            Thread.sleep(1);
+//        }
     }
 
     private void readUsername() throws IOException, InterruptedException {
-        pout.println("200 LOGIN\r");
+//        pout.println("200 LOGIN\r");
+        dout.write("200 LOGIN\r\n".getBytes());
         waitForInput();
         //Jakmile client neco poslal - cteme po bytech
         while (din.available() > 0) {
             Byte uByte = din.readByte();
+            readUsername = true;
             if (endOfTheMessage(uByte)) break;
 //            sb.append(uByte);
             sumForLogin += uByte.intValue();
+
         }
-//        sb.setLength(0);
-        readUsername = true;
     }
 
     private void readAndCheckPassword() throws IOException, InterruptedException {
-        pout.println("201 PASSWORD\r");
+//        pout.println("201 PASSWORD\r");
+        dout.write("201 PASSWORD\r\n".getBytes());
         waitForInput();
         while (din.available() > 0) {
             Byte uByte = din.readByte();
             if (endOfTheMessage(uByte)) break;
+            if(uByte.intValue() > 57 || uByte.intValue() < 48){
+                dout.write("500 LOGIN FAILED\r\n".getBytes());
+                closeConnection();
+            }
+
             char ch = (char)(uByte & 0xFF);
             sb.append(ch);
         }
+        if(sb.length()==0){ sb.append("0");}
         if(sumForLogin == Integer.parseInt(sb.toString())){
+            if(sumForLogin == 0){
+                dout.write("500 LOGIN FAILED\r\n".getBytes());
+                closeConnection();
+            }
             loginSuccess = true;
-            pout.println("202 OK\r");
+            dout.write("202 OK\r\n".getBytes());
+//            pout.println("202 OK\r");
 
         }else{
-            pout.println("500 LOGIN FAILED\r");
-
+//            pout.println("500 LOGIN FAILED\r");
+            dout.write("500 LOGIN FAILED\r\n".getBytes());
             closeConnection();
         }
     }

@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8e6b329a-47d6-4f3b-ac47-1ccc3215e30e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/robot/Robot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/robot/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/robot/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/robot/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/robot/ServerConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/robot/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/robot/Server.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/robot/Robot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/robot/ServerConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/robot/ServerConnection.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -54,7 +51,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Client">
+  <component name="RunManager" selected="Application.Robot">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="robot.Client" />
       <module name="tcp" />
@@ -87,8 +84,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Client" />
         <item itemvalue="Application.Robot" />
+        <item itemvalue="Application.Client" />
       </list>
     </recent_temporary>
   </component>
@@ -104,7 +101,10 @@
       <updated>1572696608986</updated>
       <workItem from="1572696614180" duration="4423000" />
       <workItem from="1572788710883" duration="10904000" />
-      <workItem from="1573302891578" duration="27444000" />
+      <workItem from="1573302891578" duration="27737000" />
+      <workItem from="1573469238898" duration="2377000" />
+      <workItem from="1573681814052" duration="6000" />
+      <workItem from="1573856220959" duration="11653000" />
     </task>
     <servers />
   </component>
@@ -116,7 +116,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
@@ -141,11 +143,6 @@
           <option name="timeStamp" value="37" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
-          <line>78</line>
-          <option name="timeStamp" value="39" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/robot/Client.java</url>
           <line>41</line>
           <option name="timeStamp" value="41" />
@@ -154,6 +151,26 @@
           <url>file://$PROJECT_DIR$/src/main/java/robot/Client.java</url>
           <line>49</line>
           <option name="timeStamp" value="42" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
+          <line>86</line>
+          <option name="timeStamp" value="58" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
+          <line>238</line>
+          <option name="timeStamp" value="63" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
+          <line>77</line>
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
+          <line>235</line>
+          <option name="timeStamp" value="65" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
