@@ -104,7 +104,9 @@
       <workItem from="1573302891578" duration="27737000" />
       <workItem from="1573469238898" duration="2377000" />
       <workItem from="1573681814052" duration="6000" />
-      <workItem from="1573856220959" duration="11653000" />
+      <workItem from="1573856220959" duration="13361000" />
+      <workItem from="1574004427736" duration="2430000" />
+      <workItem from="1574007264270" duration="1137000" />
     </task>
     <servers />
   </component>
@@ -154,23 +156,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
-          <line>86</line>
-          <option name="timeStamp" value="58" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
-          <line>238</line>
-          <option name="timeStamp" value="63" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
-          <line>77</line>
-          <option name="timeStamp" value="64" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
-          <line>235</line>
-          <option name="timeStamp" value="65" />
+          <line>260</line>
+          <option name="timeStamp" value="72" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

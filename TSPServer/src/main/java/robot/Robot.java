@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 
 /**
@@ -55,6 +57,7 @@ class ServerConnection extends Thread {
     private StringBuilder sb;
     private int sumForLogin;
     private boolean readAnything = false;
+    private int sumForFOTO;
 
     public ServerConnection(Socket socket, Server server){
         super("ServerConnectionThread"+i);
@@ -115,7 +118,7 @@ class ServerConnection extends Thread {
             else if(uByte.toString().equals("70")) { //F
                 readAnything = true;
                 if(verifySyntaxForFOTO(uByte)){
-                    getFOTO();
+                    getFOTO(uByte);
                     dout.write("202 OK\r\n".getBytes());
 //                    pout.println("202 OK\r");
                 }
@@ -138,7 +141,46 @@ class ServerConnection extends Thread {
         return false;
     }
 
-    private void getFOTO() throws IOException {
+    private void getFOTO(Byte uByte) throws IOException {
+        //precetli jsme jiz FOTO_
+
+        //getNumberOfFOTOBits (1024)
+        StringBuilder sb2 = new StringBuilder();
+        int numberOfDataBytes = 0;
+        while (din.available() > 0) {
+            uByte = din.readByte();
+            if (uByte.toString().equals("32")) break; //precetli jsme mezeru, a ted chceme cist samotne FOTO
+            char ch = (char)(uByte & 0xFF);
+            sb2.append(ch);
+        }
+        numberOfDataBytes = Integer.parseInt(sb2.toString());
+
+        //nacitej numberOfDataBytes (1024) do sumy (jako login)
+        for (int i = 0; i < numberOfDataBytes; i++){
+            uByte = din.readByte();
+            sumForFOTO += (uByte & 0xFF);
+        }
+
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        //posledni 4 bajty souctu
+        for(int i = 0; i < 4; i++){
+            uByte = din.readByte();
+            bb.put(uByte);
+        }
+        bb.order(ByteOrder.BIG_ENDIAN);
+         if( sumForFOTO == bb.getInt()) {
+             dout.write("202 OK\r\n".getBytes());
+         }
+         else{
+             dout.write("300 <mezera> BAD CHECKSUM\r\n".getBytes());
+         }
+
+
+
+        //pak sumu preloz do hex
+        //pak prijmi jeste 4 bity kontrolniho souctu (budou v hex)
+        //porovnej sum a hex
+        //vypis OK nebo CHYBA SUMCHECK
 
     }
 
@@ -187,7 +229,6 @@ class ServerConnection extends Thread {
         closeConnection();
         return false;
     }
-
 
     private void closeConnection() throws IOException, InterruptedException {
         Thread.sleep(1000);
