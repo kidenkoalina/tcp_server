@@ -50,7 +50,7 @@ class ServerConnection extends Thread {
     Socket socket;
     DataInputStream din;
     DataOutputStream dout;
-//    PrintWriter pout;
+
     private boolean shouldRun = true;
     private boolean loginSuccess = false;
     private boolean readUsername = false;
@@ -58,6 +58,8 @@ class ServerConnection extends Thread {
     private int sumForLogin;
     private boolean readAnything = false;
     private int sumForFOTO;
+
+    private boolean signR;
 
     public ServerConnection(Socket socket, Server server){
         super("ServerConnectionThread"+i);
@@ -71,7 +73,6 @@ class ServerConnection extends Thread {
         try {
             din = new DataInputStream(socket.getInputStream());
             dout = new DataOutputStream(socket.getOutputStream());
-//            pout = new PrintWriter(socket.getOutputStream(), true);
             sb = new StringBuilder();
             sumForLogin = 0;
 
@@ -112,15 +113,12 @@ class ServerConnection extends Thread {
                 if(verifySyntaxForINFO(uByte)){
                     getINFO(uByte);
                     dout.write("202 OK\r\n".getBytes());
-//                    pout.println("202 OK\r");
                 }
             }
             else if(uByte.toString().equals("70")) { //F
                 readAnything = true;
                 if(verifySyntaxForFOTO(uByte)){
                     getFOTO(uByte);
-                    dout.write("202 OK\r\n".getBytes());
-//                    pout.println("202 OK\r");
                 }
             }
             else {
@@ -131,57 +129,58 @@ class ServerConnection extends Thread {
         }
     }
 
-    private boolean endOfTheMessage(Byte uByte) throws IOException {
-        if(uByte.toString().equals("13")) {
-            uByte = din.readByte();
-            if (uByte.toString().equals("10")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void getFOTO(Byte uByte) throws IOException {
+    private void getFOTO(Byte uByte) throws IOException, InterruptedException {
         //precetli jsme jiz FOTO_
 
         //getNumberOfFOTOBits (1024)
+        System.out.println("VLAKNO " + super.getName());
         StringBuilder sb2 = new StringBuilder();
         int numberOfDataBytes = 0;
         while (din.available() > 0) {
             uByte = din.readByte();
+            if(uByte.toString().equals("45")){
+                dout.write("501 SYNTAX ERROR\r\n".getBytes());
+                closeConnection();
+            }
+
+            System.out.println("uByte1 = " + uByte);
+
             if (uByte.toString().equals("32")) break; //precetli jsme mezeru, a ted chceme cist samotne FOTO
             char ch = (char)(uByte & 0xFF);
+
+            System.out.println("char ch = " + ch);
+
             sb2.append(ch);
         }
         numberOfDataBytes = Integer.parseInt(sb2.toString());
 
+        System.out.println("numberOfDataBytes = " + numberOfDataBytes);
+
+        sumForFOTO = 0;
+
         //nacitej numberOfDataBytes (1024) do sumy (jako login)
         for (int i = 0; i < numberOfDataBytes; i++){
             uByte = din.readByte();
+            System.out.println("uByte2 = " + uByte);
             sumForFOTO += (uByte & 0xFF);
+            System.out.println("prubezne sumForFOTO = " + sumForFOTO);
         }
+        System.out.println("konecne sumForFOTO = " + sumForFOTO);
 
-        ByteBuffer bb = ByteBuffer.allocate(4);
+        byte[] checkSumArr = new byte[4];
         //posledni 4 bajty souctu
         for(int i = 0; i < 4; i++){
-            uByte = din.readByte();
-            bb.put(uByte);
+            checkSumArr[i] = din.readByte();
+            System.out.println("checkSumArr[" + i + "]" + checkSumArr[i]);
         }
-        bb.order(ByteOrder.BIG_ENDIAN);
-         if( sumForFOTO == bb.getInt()) {
+        int checkSum = ByteBuffer.wrap(checkSumArr).order(ByteOrder.BIG_ENDIAN).getInt();
+        System.out.println("final checkSum = " + checkSum);
+         if(sumForFOTO == checkSum) {
              dout.write("202 OK\r\n".getBytes());
          }
          else{
-             dout.write("300 <mezera> BAD CHECKSUM\r\n".getBytes());
+             dout.write("300 BAD CHECKSUM\r\n".getBytes());
          }
-
-
-
-        //pak sumu preloz do hex
-        //pak prijmi jeste 4 bity kontrolniho souctu (budou v hex)
-        //porovnej sum a hex
-        //vypis OK nebo CHYBA SUMCHECK
-
     }
 
     private void getINFO(Byte uByte) throws IOException {
@@ -205,12 +204,10 @@ class ServerConnection extends Thread {
                 }
             }
         }
-//        pout.println("501 SYNTAX ERROR\r");
         dout.write("501 SYNTAX ERROR\r\n".getBytes());
         closeConnection();
         return false;
     }
-
 
     private boolean verifySyntaxForINFO(Byte uByte) throws IOException, InterruptedException {
         uByte = din.readByte();
@@ -257,8 +254,34 @@ class ServerConnection extends Thread {
 //        }
     }
 
+    private boolean endOfTheMessage(Byte uByte) throws IOException {
+        if(uByte.toString().equals("13")){
+            signR = true;
+            Byte byteTmp = uByte;
+            uByte = din.readByte();
+            if (uByte.toString().equals("10")) {
+                return true;
+            }
+        }
+
+        if(uByte.toString().equals("13")) {
+            uByte = din.readByte();
+            if (uByte.toString().equals("10")) {
+                return true;
+            }
+            else if(uByte.toString().equals("13")){
+                if(endOfTheMessage(uByte)){
+                    return true;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        return false;
+    }
+
     private void readUsername() throws IOException, InterruptedException {
-//        pout.println("200 LOGIN\r");
         dout.write("200 LOGIN\r\n".getBytes());
         waitForInput();
         //Jakmile client neco poslal - cteme po bytech
@@ -266,14 +289,11 @@ class ServerConnection extends Thread {
             Byte uByte = din.readByte();
             readUsername = true;
             if (endOfTheMessage(uByte)) break;
-//            sb.append(uByte);
             sumForLogin += uByte.intValue();
-
         }
     }
 
     private void readAndCheckPassword() throws IOException, InterruptedException {
-//        pout.println("201 PASSWORD\r");
         dout.write("201 PASSWORD\r\n".getBytes());
         waitForInput();
         while (din.available() > 0) {
@@ -295,10 +315,7 @@ class ServerConnection extends Thread {
             }
             loginSuccess = true;
             dout.write("202 OK\r\n".getBytes());
-//            pout.println("202 OK\r");
-
         }else{
-//            pout.println("500 LOGIN FAILED\r");
             dout.write("500 LOGIN FAILED\r\n".getBytes());
             closeConnection();
         }

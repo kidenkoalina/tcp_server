@@ -4,6 +4,8 @@
     <list default="true" id="8e6b329a-47d6-4f3b-ac47-1ccc3215e30e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/robot/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/robot/Robot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/robot/Robot.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/robot/Robot.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/robot/Server.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/robot/Server.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/robot/ServerConnection.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/robot/ServerConnection.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -106,7 +108,7 @@
       <workItem from="1573681814052" duration="6000" />
       <workItem from="1573856220959" duration="13361000" />
       <workItem from="1574004427736" duration="2430000" />
-      <workItem from="1574007264270" duration="1137000" />
+      <workItem from="1574007264270" duration="7900000" />
     </task>
     <servers />
   </component>
@@ -156,8 +158,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
-          <line>260</line>
-          <option name="timeStamp" value="72" />
+          <line>175</line>
+          <option name="timeStamp" value="77" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
+          <line>169</line>
+          <option name="timeStamp" value="78" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
