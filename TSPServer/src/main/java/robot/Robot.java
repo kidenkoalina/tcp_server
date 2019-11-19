@@ -2,7 +2,6 @@ package robot;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,7 +16,7 @@ import java.util.Random;
 public class Robot {
     public static void main(String[] args) throws IOException {
         new Server(Integer.parseInt( args[0]));
-//            new Server(3999);
+//            new Server(3638);
     }
 }
 
@@ -29,7 +28,9 @@ class Server {
 
     public Server(int port) {
         try {
+            System.out.println( "Starting server...");
             listener = new ServerSocket(port);
+            System.out.println("Waiting for clients... ");
             while (shouldRun) {
                 Socket socket = listener.accept();
                 ServerConnection sc = new ServerConnection(socket, this);
@@ -68,6 +69,7 @@ class ServerConnection extends Thread {
     public ServerConnection(Socket socket, Server server){
         super("ServerConnectionThread"+i);
         i++;
+        System.out.println("Accepted new client in the thread: " + super.getName());
         this.socket = socket;
         this.server = server;
     }
@@ -92,8 +94,10 @@ class ServerConnection extends Thread {
                         readAndCheckPassword();
                     }
                 }
+
                 //we did login successfully, now we read INFO or FOTO
                 else {
+                    System.out.println(super.getName() + " Server waiting for massages INFO or FOTO");
                     findOutIfItIsINFOOrFOTO();
                 }
             }
@@ -175,6 +179,7 @@ class ServerConnection extends Thread {
         }
         int checkSum = ByteBuffer.wrap(checkSumArr).order(ByteOrder.BIG_ENDIAN).getInt();
         if(sumForFOTO == checkSum) {
+            System.out.println(super.getName() + " Server got message FOTO successfully");
             dout.write("202 OK\r\n".getBytes());
             //ukladani fotky
 //            int x = random.nextInt(900) + 1;
@@ -192,6 +197,7 @@ class ServerConnection extends Thread {
             uByte = din.readByte();
             if (endOfTheMessage(uByte)) break;
         }
+        System.out.println(super.getName() +  " Server got message INFO successfully");
     }
     //verify if the sended data is equal to "OTO<space>", "F" we have already read
     private boolean verifySyntaxForFOTO(Byte uByte) throws IOException, InterruptedException {
@@ -268,20 +274,22 @@ class ServerConnection extends Thread {
     //INT
     private void readUsername() throws IOException, InterruptedException {
         dout.write("200 LOGIN\r\n".getBytes());
+        System.out.println(super.getName() +  " Waiting for client's login");
         waitForInput();
         while (din.available() > 0) {
             int uByte = din.readUnsignedByte();
             readUsername = true;
-            if(endOfTheMessage2(uByte)){
+            if(endOfTheMessageForLogin(uByte)){
                 sumForLogin -= 13;
                 break;
             }
             sumForLogin += uByte;
         }
+        System.out.println(super.getName() +  " Server got client's login");
     }
 
     //INT
-    private boolean endOfTheMessage2(int uByte){
+    private boolean endOfTheMessageForLogin(int uByte){
         if(signR){
             if(uByte == 10){
                 signR = false;
@@ -299,11 +307,11 @@ class ServerConnection extends Thread {
     //INT
     private void readAndCheckPassword() throws IOException, InterruptedException {
         dout.write("201 PASSWORD\r\n".getBytes());
+        System.out.println(super.getName() + " Waiting for client's password");
         waitForInput();
 
         while (din.available() > 0) {
             int uByte = din.readUnsignedByte();
-            System.out.println(super.getName() + " password uByte = " + uByte );
             if (endOfTheMessage(uByte)) break;
             //if uByte is not in {0,1,...9}, then senf 500 to the client
             if(uByte > 57 || uByte < 48){
@@ -322,8 +330,12 @@ class ServerConnection extends Thread {
             }
             loginSuccess = true;
             dout.write("202 OK\r\n".getBytes());
+            System.out.println(super.getName() + " Server got client's password");
+            System.out.println(super.getName() + " login/password is ok");
         }else{
             dout.write("500 LOGIN FAILED\r\n".getBytes());
+            System.out.println(super.getName() + " Server got client's password");
+            System.out.println(super.getName() + " login/password is not ok");
             closeConnection();
         }
     }
