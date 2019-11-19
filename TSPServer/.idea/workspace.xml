@@ -109,6 +109,7 @@
       <workItem from="1573856220959" duration="13361000" />
       <workItem from="1574004427736" duration="2430000" />
       <workItem from="1574007264270" duration="7900000" />
+      <workItem from="1574038491646" duration="21720000" />
     </task>
     <servers />
   </component>
@@ -158,15 +159,15 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
-          <line>175</line>
-          <option name="timeStamp" value="77" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/robot/Robot.java</url>
-          <line>169</line>
-          <option name="timeStamp" value="78" />
+          <line>95</line>
+          <option name="timeStamp" value="93" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="sumForLogin" language="JAVA" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
